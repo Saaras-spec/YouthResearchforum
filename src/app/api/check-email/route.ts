@@ -28,8 +28,9 @@ export async function POST(request: NextRequest) {
 
     // Use Firebase Auth REST API to check if email exists
     // This bypasses Firestore rules entirely
+    const encodedKey = encodeURIComponent(apiKey);
     const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:fetchSignInMethodsForEmail?key=${apiKey}`,
+      `https://identitytoolkit.googleapis.com/v1/accounts:fetchSignInMethodsForEmail?key=${encodedKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
