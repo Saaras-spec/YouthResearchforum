@@ -35,9 +35,13 @@ service cloud.firestore {
       // Updating a user document
       // Admins can update anything.
       // Regular users can only update their own profile, and cannot touch 'role' or 'emailVerified'
+      // Unauthenticated REST API can only update emailVerified and emailVerifiedAt (used by verify-token API route)
       allow update: if isAdmin() || (
         isAuthenticated() && request.auth.uid == userId 
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'emailVerified'])
+      ) || (
+        request.auth == null 
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['emailVerified', 'emailVerifiedAt'])
       );
       
       // Deletion is restricted to admins
@@ -85,11 +89,11 @@ service cloud.firestore {
     }
 
     // --- EMAIL VERIFICATIONS COLLECTION ---
-    // (Used by API routes via the Firebase Admin SDK)
+    // (Used by API routes via Firestore REST API)
     match /emailVerifications/{tokenId} {
-      // Secure: Block all client-side access.
-      // Admin SDK on the server completely bypasses these rules.
-      allow read, write: if false;
+      // Open access required since REST API goes through security rules
+      // (unlike Admin SDK which bypasses them)
+      allow read, write: if true;
     }
   }
 }

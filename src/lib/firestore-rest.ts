@@ -4,8 +4,10 @@
  * Uses the Firestore REST API v1 to perform CRUD operations on documents.
  */
 
-const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "youth-research-50cd9";
-const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "";
+const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "youth-research-50cd9";
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "";
+
+console.log("Firestore REST: API Key available:", !!FIREBASE_API_KEY, "| Project ID:", PROJECT_ID);
 
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 
