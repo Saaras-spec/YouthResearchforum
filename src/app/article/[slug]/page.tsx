@@ -157,9 +157,61 @@ export default async function ArticlePage({ params }: PageProps) {
     <article className="min-h-screen bg-editorial-cream font-sans pb-16">
       
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO SECTION — Full screen width cover image with overlaid text (Desktop) / Image only (Mobile)
+          MOBILE HERO — Normal block image, no overlap with navbar
           ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full h-[40vh] sm:h-screen bg-editorial-charcoal overflow-hidden flex items-start justify-center -mt-[78px] sm:-mt-[92px] lg:-mt-[106px] pt-[110px] sm:pt-[130px] lg:pt-[140px]">
+      <div className="block lg:hidden">
+        {/* Full-width cover image as a normal block element */}
+        <div className="relative w-full aspect-[16/9] bg-editorial-charcoal overflow-hidden">
+          <Image
+            src={article.coverImage || DEFAULT_PLACEHOLDER_IMAGE}
+            alt={article.title}
+            fill
+            sizes="100vw"
+            className="object-cover object-top"
+            priority
+          />
+        </div>
+
+        {/* Photo credit (subtle, below image) */}
+        {(article.photoCredit || article.coverImageCredit) && (
+          <div className="text-left px-4 pt-1.5 pb-0 text-[10px] text-gray-400 font-mono bg-white">
+            Photo: {article.photoCredit || article.coverImageCredit}
+          </div>
+        )}
+
+        {/* Title & Metadata — stacked cleanly below image */}
+        <div className="bg-white px-4 pt-3 pb-3 text-left space-y-2">
+          <h1 
+            className="text-2xl font-bold text-editorial-charcoal leading-snug tracking-tight"
+            style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+          >
+            {article.title}
+          </h1>
+          {article.subtitle && (
+            <p 
+              className="text-sm text-editorial-gray font-light leading-relaxed"
+              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+            >
+              {article.subtitle}
+            </p>
+          )}
+          
+          {/* Author & reading stats */}
+          <div className="flex flex-col space-y-0.5 pt-2 border-t border-[#e6e2da]/40">
+            <div className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal font-semibold">
+              By {article.authorName}
+            </div>
+            <div className="text-[10px] font-mono text-editorial-gray uppercase tracking-wider">
+              {article.readingTime || 5} min read &bull; {wordCount.toLocaleString()} words
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          DESKTOP HERO — Full screen immersive cover with overlaid text
+          ═══════════════════════════════════════════════════════════════════ */}
+      <section className="hidden lg:flex relative w-full h-screen bg-editorial-charcoal overflow-hidden items-start justify-center -mt-[106px] pt-[140px]">
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -174,64 +226,28 @@ export default async function ArticlePage({ params }: PageProps) {
 
         {/* Desktop Photo Credit (Bottom Right overlay) */}
         {(article.photoCredit || article.coverImageCredit) && (
-          <div className="hidden sm:block absolute bottom-4 right-4 z-10 text-[10px] text-white/60 font-mono bg-black/30 px-2.5 py-1 rounded-xs backdrop-blur-xs select-none">
+          <div className="absolute bottom-4 right-4 z-10 text-[10px] text-white/60 font-mono bg-black/30 px-2.5 py-1 rounded-xs backdrop-blur-xs select-none">
             Photo: {article.photoCredit || article.coverImageCredit}
           </div>
         )}
 
         {/* Desktop Overlay Text (Centered) */}
-        <div className="hidden sm:block relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-12 md:px-16 space-y-6">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-12 md:px-16 space-y-6">
           <h1 
-            className="text-3xl sm:text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
+            className="text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
             style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
           >
             {article.title}
           </h1>
           
           <p 
-            className="text-base sm:text-lg md:text-xl text-white/90 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-sm"
+            className="text-lg md:text-xl text-white/90 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-sm"
             style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
           >
             {article.subtitle}
           </p>
         </div>
       </section>
-
-      {/* Mobile Photo Credit (Subtle, below the image) */}
-      {(article.photoCredit || article.coverImageCredit) && (
-        <div className="block sm:hidden text-left px-4 pt-2 text-[10px] text-gray-400 font-mono bg-white">
-          Photo: {article.photoCredit || article.coverImageCredit}
-        </div>
-      )}
-
-      {/* Mobile Title & Metadata Section (Below Image) */}
-      <div className="block sm:hidden bg-white px-4 pt-4 pb-2 text-left space-y-2">
-        <div className="text-xs font-mono uppercase tracking-widest text-editorial-gold font-bold">
-          {getDisplayType(article.type)} / {article.category}
-        </div>
-        <h1 
-          className="text-2xl sm:text-3xl md:text-5xl font-bold text-editorial-charcoal leading-snug tracking-tight"
-          style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
-        >
-          {article.title}
-        </h1>
-        <p 
-          className="text-sm text-editorial-gray font-light leading-relaxed"
-          style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
-        >
-          {article.subtitle}
-        </p>
-        
-        {/* Mobile metadata (author & reading stats) */}
-        <div className="flex flex-col space-y-0.5 pt-2 border-t border-[#e6e2da]/40">
-          <div className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal font-semibold">
-            By {article.authorName}
-          </div>
-          <div className="text-[10px] font-mono text-editorial-gray uppercase tracking-wider">
-            {article.readingTime || 5} min read &bull; {wordCount.toLocaleString()} words
-          </div>
-        </div>
-      </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
           TWO-COLUMN LAYOUT — Left sidebar + Right article body

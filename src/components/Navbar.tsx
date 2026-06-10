@@ -41,12 +41,14 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverHero, setIsOverHero] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Handle scroll effect & hero visibility on article pages
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 50;
       setIsScrolled(scrolled);
+      setIsMobile(window.innerWidth < 1024);
 
       if (pathname?.startsWith("/article/")) {
         const heroHeight = window.innerHeight;
@@ -172,7 +174,8 @@ export default function Navbar() {
     );
   };
 
-  const shouldBeTransparent = isOverHero && !isMobileMenuOpen;
+  // Never go transparent on mobile — always solid white/cream navbar
+  const shouldBeTransparent = isOverHero && !isMobileMenuOpen && !isMobile;
 
   return (
     <>
