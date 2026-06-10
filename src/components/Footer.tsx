@@ -133,7 +133,7 @@ export default function Footer() {
               </a>
               {/* X (formerly Twitter) */}
               <a
-                href="https://twitter.com"
+                href="https://x.com/yrfhandle"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-editorial-gray hover:text-editorial-accent transition-colors duration-200 cursor-pointer flex items-center justify-center"
@@ -143,19 +143,7 @@ export default function Footer() {
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
               </a>
-              {/* YouTube */}
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-editorial-gray hover:text-editorial-accent transition-colors duration-200 cursor-pointer flex items-center justify-center"
-                aria-label="YouTube"
-              >
-                <svg className="h-4.5 w-4.5 stroke-current fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"></path>
-                  <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon>
-                </svg>
-              </a>
+
             </div>
           </div>
 
