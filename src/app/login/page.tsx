@@ -220,7 +220,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center bg-editorial-cream py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-md w-full space-y-8 bg-white border-t-2 border-t-editorial-accent border-x border-b border-[#e6e2da] p-8 rounded-sm shadow-xs transition-all duration-300">
+      <div className="max-w-md w-full space-y-8 bg-white border-t-2 border-t-editorial-accent border-x border-b border-[#e6e2da] p-5 sm:p-8 rounded-sm shadow-xs transition-all duration-300">
         
         {/* Logo & Title */}
         <div className="text-center space-y-2.5 flex flex-col items-center">
@@ -377,7 +377,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="first-name" className="block text-xs font-mono uppercase tracking-wider text-editorial-gray mb-1.5">
                   First Name

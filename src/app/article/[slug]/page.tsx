@@ -159,7 +159,7 @@ export default async function ArticlePage({ params }: PageProps) {
       {/* ═══════════════════════════════════════════════════════════════════
           HERO SECTION — Full screen width cover image with overlaid text
           ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full h-screen bg-editorial-charcoal overflow-hidden flex items-start justify-center -mt-[92px] sm:-mt-[106px] pt-[140px]">
+      <section className="relative w-full h-screen bg-editorial-charcoal overflow-hidden flex items-start justify-center -mt-[78px] sm:-mt-[92px] lg:-mt-[106px] pt-[110px] sm:pt-[130px] lg:pt-[140px]">
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -174,10 +174,9 @@ export default async function ArticlePage({ params }: PageProps) {
 
 
 
-        {/* Centered Overlaid Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6 sm:px-12 md:px-16 space-y-6">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-12 md:px-16 space-y-6">
           <h1 
-            className="text-3xl sm:text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
+            className="text-2xl sm:text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
             style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
           >
             {article.title}
@@ -198,7 +197,7 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="flex flex-col lg:flex-row w-full mt-10 lg:mt-14">
 
         {/* ─── LEFT COLUMN: Metadata Sidebar (~300px wide, generous 80px left margin) ─── */}
-        <aside className="w-full lg:w-[300px] lg:ml-[80px] flex-shrink-0 px-6 sm:px-10 lg:px-0 py-8 lg:py-14 bg-editorial-cream">
+        <aside className="w-full lg:w-[300px] lg:ml-[80px] flex-shrink-0 px-4 sm:px-10 lg:px-0 py-8 lg:py-14 bg-editorial-cream">
           <div className="lg:sticky lg:top-20 flex flex-col">
             
             {/* 1. Author name as a clickable link */}
@@ -261,7 +260,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
         {/* ─── RIGHT COLUMN: Article Body (fills remaining space, starts right after left column, no divider) ─── */}
         <div className="flex-grow flex-1 min-w-0">
-          <div className="px-6 sm:px-10 lg:pl-[50px] lg:pr-[60px] py-8 lg:py-14">
+          <div className="px-4 sm:px-10 lg:pl-[50px] lg:pr-[60px] py-8 lg:py-14">
             
             {/* Render content without max-width restriction */}
             {renderContent(article.content)}

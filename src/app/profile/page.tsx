@@ -216,7 +216,7 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        <div className="bg-white border border-[#e6e2da] p-8 rounded-sm shadow-xs space-y-8">
+        <div className="bg-white border border-[#e6e2da] p-5 sm:p-8 rounded-sm shadow-xs space-y-8">
           {/* Unified Profile Form */}
           <form onSubmit={handleProfileSave} className="space-y-6">
             {statusMsg && (

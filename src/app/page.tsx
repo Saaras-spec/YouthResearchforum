@@ -32,7 +32,7 @@ export default async function HomePage() {
         <div>
           {/* 1. HERO FEATURED ARTICLE SECTION - Full Bleed 100vw */}
           {featuredArticle && (
-            <section className="relative mx-6 sm:mx-8 lg:mx-10 mt-4 h-[70vh] overflow-hidden group cursor-pointer">
+            <section className="relative mx-3 sm:mx-8 lg:mx-10 mt-4 h-[50vh] sm:h-[70vh] overflow-hidden group cursor-pointer">
               <Link href={`/article/${featuredArticle.slug}`} className="absolute inset-0 block w-full h-full">
                 {/* Background Image Container */}
                 <div className="absolute inset-0 w-full h-full bg-[#f4f4f4]">
@@ -50,12 +50,12 @@ export default async function HomePage() {
                 <div className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-90" style={{ backgroundColor: "rgba(0, 0, 0, 0.35)" }} />
                 
                 {/* Immersive Text Overlay (Centered) */}
-                <div className="absolute inset-0 flex items-start justify-center text-center p-6 sm:p-12 md:p-16 z-10 pt-10 sm:pt-16">
-                  <div className="max-w-3xl px-4 flex flex-col items-center justify-center text-center w-full">
-                    <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-md tracking-tight select-none text-center">
+                <div className="absolute inset-0 flex items-start justify-center text-center p-4 sm:p-12 md:p-16 z-10 pt-8 sm:pt-16">
+                  <div className="max-w-3xl px-2 sm:px-4 flex flex-col items-center justify-center text-center w-full">
+                    <h1 className="font-serif text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-md tracking-tight select-none text-center">
                       {featuredArticle.title}
                     </h1>
-                    <p className="font-serif text-base sm:text-xl text-white font-light leading-relaxed mt-4 max-w-2xl mx-auto">
+                    <p className="font-serif text-xs sm:text-base md:text-xl text-white font-light leading-relaxed mt-2.5 sm:mt-4 max-w-2xl mx-auto line-clamp-3 sm:line-clamp-none">
                       {featuredArticle.excerpt || featuredArticle.subtitle}
                     </p>
                   </div>
@@ -65,7 +65,7 @@ export default async function HomePage() {
           )}
 
           {/* Rest of the homepage content inside layout-restricted container */}
-          <div className="px-10 sm:px-16 lg:px-24 pb-20 mt-24">
+          <div className="px-4 sm:px-16 lg:px-24 pb-12 sm:pb-20 mt-12 sm:mt-24">
             <div className="space-y-16">
 
             {/* 2. LATEST ARTICLES GRID */}

@@ -187,15 +187,15 @@ export default function Navbar() {
             <div className="flex-shrink-0">
               <Link
                 href="/"
-                className="group flex items-center gap-3.5 transition-opacity duration-200 hover:opacity-75"
+                className="group flex items-center gap-2 sm:gap-3.5 transition-opacity duration-200 hover:opacity-75"
               >
                 {/* Globe Emblem */}
-                <div className={`relative flex-shrink-0 transition-all duration-300 ${isScrolled ? "h-[38px] w-[50px] sm:h-[44px] sm:w-[58px]" : "h-[52px] w-[68px] sm:h-[58px] sm:w-[76px]"}`}>
+                <div className={`relative flex-shrink-0 transition-all duration-300 ${isScrolled ? "h-[30px] w-[40px] sm:h-[38px] sm:w-[50px] md:h-[44px] md:w-[58px]" : "h-[38px] w-[50px] sm:h-[52px] sm:w-[68px] md:h-[58px] md:w-[76px]"}`}>
                   <Image
                     src="/emblem.png"
                     alt="Youth Research Forum — Globe Emblem"
                     fill
-                    sizes="(max-width: 640px) 68px, 76px"
+                    sizes="(max-width: 640px) 50px, (max-width: 768px) 68px, 76px"
                     className="object-contain"
                     priority
                     unoptimized
@@ -207,7 +207,7 @@ export default function Navbar() {
                   shouldBeTransparent
                     ? "text-white"
                     : "text-[#930B51]"
-                } ${isScrolled ? "text-[14px] sm:text-[17px] lg:text-[19px]" : "text-[16px] sm:text-[20px] lg:text-[22px]"}`}>
+                } ${isScrolled ? "text-[11px] sm:text-[15px] md:text-[17px] lg:text-[19px]" : "text-[13px] sm:text-[18px] md:text-[20px] lg:text-[22px]"}`}>
                   YOUTH RESEARCH FORUM
                 </span>
               </Link>
@@ -399,7 +399,7 @@ export default function Navbar() {
                     placeholder="Search articles, authors, policy, and research..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-transparent font-serif text-lg sm:text-2xl placeholder-editorial-gray/50 border-0 outline-none ring-0 text-editorial-charcoal focus:ring-0"
+                    className="w-full bg-transparent font-serif text-sm sm:text-2xl placeholder-editorial-gray/50 border-0 outline-none ring-0 text-editorial-charcoal focus:ring-0"
                     autoFocus
                   />
                   <button
@@ -464,7 +464,7 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-            className={`fixed inset-0 z-40 bg-editorial-cream flex flex-col justify-between border-t border-[#e6e2da] overflow-y-auto transition-all duration-300 ${isScrolled ? "top-[54px] sm:top-[60px]" : "top-[92px] sm:top-[106px]"}`}
+            className={`fixed inset-0 z-40 bg-editorial-cream flex flex-col justify-between border-t border-[#e6e2da] overflow-y-auto transition-all duration-300 ${isScrolled ? "top-[48px] sm:top-[60px]" : "top-[78px] sm:top-[92px] lg:top-[106px]"}`}
           >
             <div className="px-6 py-8 space-y-6">
               <nav className="flex flex-col space-y-6">

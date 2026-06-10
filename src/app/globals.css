@@ -58,14 +58,21 @@ body {
 /* Rich Text Formatting Styles for Published Articles */
 .rich-text {
   font-family: var(--font-serif), Georgia, serif;
-  font-size: 1.25rem; /* 20px */
-  line-height: 1.8;
+  font-size: 1.125rem; /* 18px on mobile */
+  line-height: 1.75;
   color: #1a1a1a;
 }
 
 @media (min-width: 768px) {
   .rich-text {
-    font-size: 1.3125rem; /* 21px */
+    font-size: 1.25rem; /* 20px on tablet */
+    line-height: 1.8;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rich-text {
+    font-size: 1.3125rem; /* 21px on desktop */
     line-height: 1.8;
   }
 }
@@ -145,6 +152,7 @@ body {
 .rich-text img {
   margin: 2.5rem 0;
   border-radius: 2px;
+  max-width: 100%;
   width: 100%;
   height: auto;
 }
