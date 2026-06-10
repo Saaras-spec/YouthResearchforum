@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { queryCollection } from "@/lib/firestore-rest";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,16 +14,18 @@ export async function POST(request: NextRequest) {
 
     const cleanedEmail = email.trim().toLowerCase();
 
-    // Query the users collection using adminDb (Admin SDK) to bypass security rules
-    const snapshot = await adminDb
-      .collection("users")
-      .where("email", "==", cleanedEmail)
-      .limit(1)
-      .get();
+    // Query the users collection using Firestore REST API
+    const results = await queryCollection(
+      "users",
+      "email",
+      "EQUAL",
+      cleanedEmail,
+      1
+    );
 
     return NextResponse.json({
       success: true,
-      exists: !snapshot.empty,
+      exists: results.length > 0,
     });
   } catch (error: any) {
     console.error("API error in check-email:", error);

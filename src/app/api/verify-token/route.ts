@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { getDocument, updateDocument } from "@/lib/firestore-rest";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,24 +12,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Fetch token document from Firestore using Admin SDK
-    const tokenDocRef = adminDb.collection("emailVerifications").doc(token);
-    const tokenDocSnap = await tokenDocRef.get();
+    // 1. Fetch token document from Firestore using REST API
+    const tokenDoc = await getDocument("emailVerifications", token);
 
-    if (!tokenDocSnap.exists) {
+    if (!tokenDoc.exists || !tokenDoc.data) {
       return NextResponse.json(
         { success: false, error: "Invalid verification link. Token not found." },
         { status: 404 }
       );
     }
 
-    const tokenData = tokenDocSnap.data();
-    if (!tokenData) {
-      return NextResponse.json(
-        { success: false, error: "Failed to parse token details." },
-        { status: 500 }
-      );
-    }
+    const tokenData = tokenDoc.data;
 
     // 2. Validate expiration and usage
     if (tokenData.used) {
@@ -39,7 +32,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const expiresAt = tokenData.expiresAt.toDate ? tokenData.expiresAt.toDate() : new Date(tokenData.expiresAt);
+    // expiresAt comes back as an ISO string from the REST API
+    const expiresAt = new Date(tokenData.expiresAt as string);
     if (new Date() > expiresAt) {
       return NextResponse.json(
         { success: false, error: "This verification link has expired (expired after 15 minutes)." },
@@ -47,16 +41,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Perform atomic updates: mark token as used, set user as emailVerified
-    await tokenDocRef.update({
+    // 3. Mark token as used
+    await updateDocument("emailVerifications", token, {
       used: true,
-      usedAt: new Date(),
+      usedAt: new Date().toISOString(),
     });
 
-    const userDocRef = adminDb.collection("users").doc(tokenData.userId);
-    await userDocRef.update({
+    // 4. Set user as emailVerified
+    const userId = tokenData.userId as string;
+    await updateDocument("users", userId, {
       emailVerified: true,
-      emailVerifiedAt: new Date(),
+      emailVerifiedAt: new Date().toISOString(),
     });
 
     return NextResponse.json({ success: true, email: tokenData.email });

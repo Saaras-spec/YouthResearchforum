@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { adminDb } from "@/lib/firebase-admin";
+import { getDocument, setDocument } from "@/lib/firestore-rest";
 import nodemailer from "nodemailer";
 
 export async function POST(request: NextRequest) {
@@ -15,16 +15,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Secure: Validate user document in Firestore to prevent unauthorized email spamming
-    const userDocSnap = await adminDb.collection("users").doc(userId).get();
-    if (!userDocSnap.exists) {
+    const userDoc = await getDocument("users", userId);
+    if (!userDoc.exists || !userDoc.data) {
       return NextResponse.json(
         { success: false, error: "Access denied. User record not found." },
         { status: 404 }
       );
     }
 
-    const userData = userDocSnap.data();
-    if (!userData || userData.email.trim().toLowerCase() !== email.trim().toLowerCase()) {
+    const userData = userDoc.data;
+    if (!userData.email || (userData.email as string).trim().toLowerCase() !== email.trim().toLowerCase()) {
       return NextResponse.json(
         { success: false, error: "Access denied. Email mismatch." },
         { status: 400 }
@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
     const token = crypto.randomUUID();
 
     // 2. Save token inside Firestore with 15-minute expiration
-    await adminDb.collection("emailVerifications").doc(token).set({
+    await setDocument("emailVerifications", token, {
       token,
       email: email.trim().toLowerCase(),
       userId,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(), // 15 minutes
       used: false,
     });
 
