@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           identifier: cleanedEmail,
-          continueUri: "http://localhost",
+          continueUri: "https://youth-researchforum.vercel.app",
         }),
       }
     );
@@ -53,8 +53,10 @@ export async function POST(request: NextRequest) {
     const data = await res.json();
     console.log("Firebase Auth API response:", JSON.stringify(data));
 
-    // createAuthUri returns { registered: true } if the email exists
+    // createAuthUri returns registered: true if email exists
+    // If registered field is missing/undefined, treat as not registered
     const exists = data.registered === true;
+    console.log("User exists:", exists, "| registered field:", data.registered);
 
     return NextResponse.json({
       success: true,
