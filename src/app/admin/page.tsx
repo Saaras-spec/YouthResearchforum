@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
             className="inline-flex items-center bg-editorial-accent hover:bg-editorial-charcoal text-white text-xs uppercase tracking-widest font-bold px-4 py-2.5 rounded-sm transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
-            New Essay
+            New Article
           </Link>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white border border-[#e6e2da] p-6 rounded-sm space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-xs font-mono uppercase tracking-widest text-editorial-gray font-bold">
-              Essays Published
+              Articles Published
             </span>
             <FileText className="h-5 w-5 text-editorial-accent" />
           </div>
@@ -196,14 +196,14 @@ export default function AdminDashboardPage() {
             </h4>
             <ul className="text-xs text-editorial-gray leading-relaxed font-light space-y-2 list-disc list-inside">
               <li>Keep paragraphs concise to aid on-screen reading.</li>
-              <li>Include header tags (##, ###) to structure long-form essays.</li>
+              <li>Include header tags (##, ###) to structure long-form articles.</li>
               <li>Always check image credits and formatting before submitting.</li>
             </ul>
             <Link
               href="/admin/create"
               className="inline-block w-full text-center bg-editorial-charcoal hover:bg-editorial-accent text-white uppercase text-[10px] tracking-widest font-bold py-2.5 transition-all rounded-sm"
             >
-              Write New Essay
+              Write New Article
             </Link>
           </div>
         </div>

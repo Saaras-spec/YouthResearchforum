@@ -20,14 +20,14 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Youth Research Forum | Deep Essays and Long-form Intellectual Articles",
+    default: "Youth Research Forum | Deep Articles and Long-form Intellectual Publications",
     template: "%s | Youth Research Forum",
   },
-  description: "A premium intellectual publication platform dedicated to long-form research articles, essays, and critiques covering national and international policy, philosophy, and society.",
+  description: "A premium intellectual publication platform dedicated to long-form research articles, papers, and critiques covering national and international policy, philosophy, and society.",
   metadataBase: new URL("https://youthresearchforum.org"),
   openGraph: {
     title: "Youth Research Forum",
-    description: "Deep essays and intellectual reviews of policy, philosophy, and society.",
+    description: "Deep articles and intellectual reviews of policy, philosophy, and society.",
     url: "https://youthresearchforum.org",
     siteName: "Youth Research Forum",
     locale: "en_US",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Youth Research Forum",
-    description: "Deep essays and intellectual reviews of policy, philosophy, and society.",
+    description: "Deep articles and intellectual reviews of policy, philosophy, and society.",
   },
 };
 

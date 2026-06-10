@@ -654,7 +654,7 @@ export default function MarkdownEditor({
                   <div className="w-full bg-editorial-cream-dark/10 border border-[#e6e2da] rounded-xs flex items-center justify-center p-2">
                     <img
                       src={url}
-                      alt={caption || "Essay illustration"}
+                      alt={caption || "Article illustration"}
                       className="max-w-full h-auto block"
                       loading="lazy"
                     />
@@ -895,7 +895,7 @@ export default function MarkdownEditor({
             type="button"
             onClick={openImageModal}
             className="p-2 text-editorial-accent hover:bg-editorial-accent/5 hover:text-editorial-accent rounded-sm cursor-pointer transition-colors flex items-center gap-1 font-mono text-[10px] tracking-wider uppercase font-bold"
-            title="Insert Essay Image"
+            title="Insert Article Image"
             disabled={isSubmitting || activeTab === "preview"}
           >
             <ImageIcon className="h-4 w-4 text-editorial-accent" />
@@ -1017,7 +1017,7 @@ export default function MarkdownEditor({
               <div className="flex items-center justify-between border-b border-[#e6e2da] pb-3">
                 <h3 className="font-serif font-bold text-lg text-editorial-charcoal flex items-center gap-2">
                   <ImageIcon className="h-5 w-5 text-editorial-accent" />
-                  Insert Essay Image
+                  Insert Article Image
                 </h3>
                 <button
                   type="button"

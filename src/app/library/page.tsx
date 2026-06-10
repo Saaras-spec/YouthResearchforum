@@ -95,7 +95,7 @@ export default function LibraryPage() {
             <Bookmark className="h-10 w-10 text-editorial-gold mx-auto mb-4 stroke-[1.5]" />
             <h3 className="font-serif text-xl font-bold text-editorial-charcoal">Your library is empty</h3>
             <p className="text-sm text-editorial-gray mt-2 max-w-md mx-auto font-light">
-              Bookmark insightful essays and publications from our archives to build your curated research collection.
+              Bookmark insightful articles and publications from our archives to build your curated research collection.
             </p>
             <div className="mt-8">
               <Link

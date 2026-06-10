@@ -34,7 +34,9 @@ export interface Article {
   readingTime: number; // in minutes
   featured: boolean;
   slug: string;
+  type?: string;
 }
+
 
 export interface Comment {
   id?: string;
@@ -274,3 +276,14 @@ export async function deleteComment(id: string): Promise<void> {
   const docRef = doc(db, "comments", id);
   await deleteDoc(docRef);
 }
+
+// Display type mapping helper (e.g. mapping 'essay' -> 'Article')
+export function getDisplayType(type?: string, uppercase = false): string {
+  if (!type) return uppercase ? "ARTICLE" : "Article";
+  if (type.toLowerCase() === "essay") {
+    return uppercase ? "ARTICLE" : "Article";
+  }
+  if (uppercase) return type.toUpperCase();
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+

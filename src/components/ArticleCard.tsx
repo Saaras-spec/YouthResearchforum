@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, Bookmark, Loader2 } from "lucide-react";
-import { Article, DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/db";
+import { Article, DEFAULT_PLACEHOLDER_IMAGE, getDisplayType } from "@/lib/db";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
@@ -170,7 +170,7 @@ export default function ArticleCard({ article, variant = "vertical" }: ArticleCa
         <div className="md:col-span-7 flex flex-col justify-between h-full py-1">
           <div>
             <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-editorial-gold mb-2 h-8">
-              <span>Essay / {category}</span>
+              <span>{getDisplayType(article.type)} / {category}</span>
               {article.id && (
                 <CardBookmarkButton articleId={article.id} articleSlug={slug} />
               )}
@@ -195,7 +195,7 @@ export default function ArticleCard({ article, variant = "vertical" }: ArticleCa
               href={`/article/${slug}`}
               className="text-xs font-mono uppercase tracking-widest text-editorial-accent font-bold flex items-center group/btn transition-opacity hover:opacity-80"
             >
-              Read Essay
+              Read Article
               <ArrowRight className="h-3.5 w-3.5 ml-1.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </Link>
           </div>
@@ -250,7 +250,7 @@ export default function ArticleCard({ article, variant = "vertical" }: ArticleCa
       {/* Content */}
       <div className="flex flex-col flex-grow">
         <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-editorial-gold mb-2 h-8">
-          <span>Essay / {category}</span>
+          <span>{getDisplayType(article.type)} / {category}</span>
           {article.id && (
             <CardBookmarkButton articleId={article.id} articleSlug={slug} />
           )}

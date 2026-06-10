@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getArticleBySlug, getArticlesBySection, Article, DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/db";
+import { getArticleBySlug, getArticlesBySection, Article, DEFAULT_PLACEHOLDER_IMAGE, getDisplayType } from "@/lib/db";
 import CommentsSection from "@/components/CommentsSection";
 import ArticleCard from "@/components/ArticleCard";
 import ArticleActions from "@/components/ArticleActions";
@@ -115,7 +115,7 @@ function renderContent(content: string) {
                 <div className="relative w-full overflow-hidden rounded-xs border border-[#e6e2da] bg-editorial-cream-dark/10">
                   <img
                     src={url}
-                    alt={caption || "Essay illustration"}
+                    alt={caption || "Article illustration"}
                     className="w-full h-auto object-cover max-h-[600px] mx-auto block"
                     loading="lazy"
                   />
@@ -252,9 +252,9 @@ export default async function ArticlePage({ params }: PageProps) {
             {/* Empty space */}
             <div className="h-8 lg:h-12" />
 
-            {/* 5. A light grey button 'SYNDICATE THIS ESSAY' in small caps */}
+            {/* 5. A light grey button 'SYNDICATE THIS ARTICLE' in small caps */}
             <button className="bg-neutral-100 hover:bg-neutral-200/80 text-neutral-600 text-[11px] tracking-widest font-mono py-3 px-4 uppercase transition-colors w-full text-center cursor-pointer font-bold">
-              SYNDICATE THIS ESSAY
+              SYNDICATE THIS {getDisplayType(article.type, true)}
             </button>
           </div>
         </aside>

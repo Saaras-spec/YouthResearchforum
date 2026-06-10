@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const sidebarLinks = [
     { name: "Overview", href: "/admin", icon: LayoutDashboard },
     { name: "All Articles", href: "/admin/articles", icon: FileText },
-    { name: "Create Essay", href: "/admin/create", icon: PlusCircle },
+    { name: "Create Article", href: "/admin/create", icon: PlusCircle },
   ];
 
   return (

@@ -389,11 +389,11 @@ export default function AdminEditArticlePage() {
           </div>
         </div>
 
-        {/* Essay Content Markdown Editor */}
+        {/* Article Content Markdown Editor */}
         <div className="bg-white border border-[#e6e2da] p-6 rounded-sm space-y-4">
           <div className="flex justify-between items-center border-b border-[#e6e2da] pb-3.5">
             <label className="block text-xs font-mono uppercase tracking-wider text-editorial-gray font-bold">
-              Essay Body Content
+              Article Body Content
             </label>
             <span className="text-[10px] font-mono text-editorial-gray">
               Supports markdown headers, lists, quotes, inline formatting, and custom images.

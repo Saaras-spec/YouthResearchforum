@@ -7,7 +7,7 @@ export const revalidate = 0; // Disable cache for live updates
 
 export const metadata: Metadata = {
   title: "National Issues & Policy Research",
-  description: "Intellectual essays, analyses, and critiques on domestic policy, governance, social change, and national issues.",
+  description: "Intellectual articles, analyses, and critiques on domestic policy, governance, social change, and national issues.",
 };
 
 export default async function NationalPage() {

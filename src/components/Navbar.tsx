@@ -396,7 +396,7 @@ export default function Navbar() {
                   <Search className="h-6 w-6 text-editorial-gray mr-3" />
                   <input
                     type="text"
-                    placeholder="Search essays, authors, policy, and research..."
+                    placeholder="Search articles, authors, policy, and research..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-transparent font-serif text-lg sm:text-2xl placeholder-editorial-gray/50 border-0 outline-none ring-0 text-editorial-charcoal focus:ring-0"

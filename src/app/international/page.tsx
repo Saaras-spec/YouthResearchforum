@@ -7,7 +7,7 @@ export const revalidate = 0; // Disable cache for live updates
 
 export const metadata: Metadata = {
   title: "International Relations & Geopolitical Studies",
-  description: "Intellectual long-form essays, reports, and critical analysis focusing on global dynamics, foreign affairs, and international studies.",
+  description: "Intellectual long-form articles, reports, and critical analysis focusing on global dynamics, foreign affairs, and international studies.",
 };
 
 export default async function InternationalPage() {

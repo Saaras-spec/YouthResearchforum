@@ -64,7 +64,7 @@ export default function AdminArticlesPage() {
           href="/admin/create"
           className="inline-flex items-center bg-editorial-accent hover:bg-editorial-charcoal text-white text-xs uppercase tracking-widest font-bold px-4 py-2.5 rounded-sm transition-colors"
         >
-          Publish New Essay
+          Publish New Article
         </Link>
       </div>
 
@@ -143,14 +143,14 @@ export default function AdminArticlesPage() {
                       <Link
                         href={`/admin/edit/${art.slug}`}
                         className="p-2 text-editorial-gray hover:text-editorial-accent border border-[#e6e2da] hover:border-editorial-accent rounded-sm transition-colors bg-white cursor-pointer"
-                        title="Edit essay"
+                        title="Edit article"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Link>
                       <button
                         onClick={() => handleDelete(art.id!, art.title)}
                         className="p-2 text-editorial-accent hover:text-red-700 border border-[#e6e2da] hover:border-red-700 rounded-sm transition-colors bg-white cursor-pointer"
-                        title="Delete essay"
+                        title="Delete article"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
