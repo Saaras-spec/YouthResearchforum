@@ -98,33 +98,7 @@ export default async function HomePage() {
               </section>
             )}
 
-            {/* 3. MIDDLE NEWSLETTER BANNER */}
-            <section className="bg-editorial-charcoal text-white p-8 sm:p-12 text-center relative overflow-hidden rounded-sm">
-              <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-                <span className="text-[10px] font-mono tracking-widest uppercase bg-editorial-accent px-2.5 py-1 rounded-sm text-white font-bold">
-                  Newsletter
-                </span>
-                <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight">
-                  Enter the debate. Sign up for our weekly digests.
-                </h2>
-                <p className="text-sm text-gray-300 font-light leading-relaxed">
-                  Join a community of thousands of academics, researchers, and public intellectuals receiving our top reviews.
-                </p>
-                <div className="pt-2">
-                  <Link
-                    href="#subscribe"
-                    className="inline-block bg-white text-editorial-charcoal hover:bg-editorial-accent hover:text-white uppercase text-xs tracking-widest font-bold px-6 py-3.5 transition-all rounded-sm cursor-pointer"
-                  >
-                    Subscribe Below
-                  </Link>
-                </div>
-              </div>
-              {/* Subtle background graphics */}
-              <div className="absolute inset-0 opacity-5 pointer-events-none">
-                <div className="absolute -top-12 -left-12 w-64 h-64 rounded-full border-4 border-white" />
-                <div className="absolute -bottom-12 -right-12 w-96 h-96 rounded-full border-4 border-white" />
-              </div>
-            </section>
+
 
 
           </div>
