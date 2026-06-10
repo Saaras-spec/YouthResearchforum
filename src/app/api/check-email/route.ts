@@ -4,6 +4,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
 
+    console.log("=== check-email API called ===");
+    console.log("FIREBASE_API_KEY exists:", !!process.env.FIREBASE_API_KEY);
+    console.log("NEXT_PUBLIC_FIREBASE_API_KEY exists:", !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+
     if (!email) {
       return NextResponse.json(
         { success: false, error: "Email field is required." },
@@ -35,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!res.ok) {
       const errBody = await res.text();
-      console.error("Firebase Auth API error:", errBody);
+      console.error("Firebase Auth API error:", res.status, errBody);
       return NextResponse.json(
         { success: false, error: "Failed to check email." },
         { status: 500 }
@@ -43,6 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await res.json();
+    console.log("Firebase Auth API response:", JSON.stringify(data));
 
     // If signInMethods array has entries, the user exists
     const exists = Array.isArray(data.signInMethods) && data.signInMethods.length > 0;
