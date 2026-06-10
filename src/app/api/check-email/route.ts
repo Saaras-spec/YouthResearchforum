@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { queryCollection } from "@/lib/firestore-rest";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,19 +12,44 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanedEmail = email.trim().toLowerCase();
+    const apiKey = process.env.FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "";
 
-    // Query the users collection using Firestore REST API
-    const results = await queryCollection(
-      "users",
-      "email",
-      "EQUAL",
-      cleanedEmail,
-      1
+    if (!apiKey) {
+      console.error("check-email: Firebase API key is not configured.");
+      return NextResponse.json(
+        { success: false, error: "Server configuration error." },
+        { status: 500 }
+      );
+    }
+
+    // Use Firebase Auth REST API to check if email exists
+    // This bypasses Firestore rules entirely
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:fetchSignInMethodsForEmail?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: cleanedEmail }),
+      }
     );
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error("Firebase Auth API error:", errBody);
+      return NextResponse.json(
+        { success: false, error: "Failed to check email." },
+        { status: 500 }
+      );
+    }
+
+    const data = await res.json();
+
+    // If signInMethods array has entries, the user exists
+    const exists = Array.isArray(data.signInMethods) && data.signInMethods.length > 0;
 
     return NextResponse.json({
       success: true,
-      exists: results.length > 0,
+      exists,
     });
   } catch (error: any) {
     console.error("API error in check-email:", error);
