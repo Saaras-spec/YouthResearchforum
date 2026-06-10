@@ -157,9 +157,9 @@ export default async function ArticlePage({ params }: PageProps) {
     <article className="min-h-screen bg-editorial-cream font-sans pb-16">
       
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO SECTION — Full screen width cover image with overlaid text
+          HERO SECTION — Full screen width cover image with overlaid text (Desktop) / Image only (Mobile)
           ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full h-screen bg-editorial-charcoal overflow-hidden flex items-start justify-center -mt-[78px] sm:-mt-[92px] lg:-mt-[106px] pt-[110px] sm:pt-[130px] lg:pt-[140px]">
+      <section className="relative w-full h-[40vh] sm:h-screen bg-editorial-charcoal overflow-hidden flex items-start justify-center -mt-[78px] sm:-mt-[92px] lg:-mt-[106px] pt-[110px] sm:pt-[130px] lg:pt-[140px]">
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -167,16 +167,15 @@ export default async function ArticlePage({ params }: PageProps) {
             alt={article.title}
             fill
             sizes="100vw"
-            className="object-cover object-top"
+            className="object-cover object-top animate-fade-in"
             priority
           />
         </div>
 
-
-
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-12 md:px-16 space-y-6">
+        {/* Desktop Overlay Text (Centered) */}
+        <div className="hidden sm:block relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-12 md:px-16 space-y-6">
           <h1 
-            className="text-2xl sm:text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
+            className="text-3xl sm:text-5xl md:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md select-none"
             style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
           >
             {article.title}
@@ -190,6 +189,28 @@ export default async function ArticlePage({ params }: PageProps) {
           </p>
         </div>
       </section>
+
+      {/* Mobile Title & Metadata Section (Below Image) */}
+      <div className="block sm:hidden bg-white px-4 pt-6 pb-2 text-left space-y-3">
+        <div className="text-xs font-mono uppercase tracking-widest text-editorial-gold font-bold">
+          {getDisplayType(article.type)} / {article.category}
+        </div>
+        <h1 
+          className="text-2xl font-bold text-editorial-charcoal leading-snug tracking-tight"
+          style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+        >
+          {article.title}
+        </h1>
+        <p 
+          className="text-sm text-editorial-gray font-light leading-relaxed"
+          style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+        >
+          {article.subtitle}
+        </p>
+        <div className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal font-semibold pt-1">
+          By {article.authorName}
+        </div>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
           TWO-COLUMN LAYOUT — Left sidebar + Right article body
