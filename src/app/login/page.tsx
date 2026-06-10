@@ -68,7 +68,7 @@ export default function LoginPage() {
 
       // 2. Double check via secure API (handles Firestore read rules on production)
       if (!userExists) {
-        const response = await fetch("/api/check-user-exists", {
+        const response = await fetch("/api/check-email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

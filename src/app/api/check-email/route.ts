@@ -26,9 +26,9 @@ export async function POST(request: NextRequest) {
       exists: !snapshot.empty,
     });
   } catch (error: any) {
-    console.error("API error in check-user-exists:", error);
+    console.error("API error in check-email:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to check if user exists." },
+      { success: false, error: error.message || "Failed to check if email exists." },
       { status: 500 }
     );
   }
