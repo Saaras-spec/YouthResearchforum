@@ -172,6 +172,13 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
+        {/* Desktop Photo Credit (Bottom Right overlay) */}
+        {(article.photoCredit || article.coverImageCredit) && (
+          <div className="hidden sm:block absolute bottom-4 right-4 z-10 text-[10px] text-white/60 font-mono bg-black/30 px-2.5 py-1 rounded-xs backdrop-blur-xs select-none">
+            Photo: {article.photoCredit || article.coverImageCredit}
+          </div>
+        )}
+
         {/* Desktop Overlay Text (Centered) */}
         <div className="hidden sm:block relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-12 md:px-16 space-y-6">
           <h1 
@@ -190,13 +197,20 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* Mobile Photo Credit (Subtle, below the image) */}
+      {(article.photoCredit || article.coverImageCredit) && (
+        <div className="block sm:hidden text-left px-4 pt-2 text-[10px] text-gray-400 font-mono bg-white">
+          Photo: {article.photoCredit || article.coverImageCredit}
+        </div>
+      )}
+
       {/* Mobile Title & Metadata Section (Below Image) */}
-      <div className="block sm:hidden bg-white px-4 pt-6 pb-2 text-left space-y-3">
+      <div className="block sm:hidden bg-white px-4 pt-4 pb-2 text-left space-y-2">
         <div className="text-xs font-mono uppercase tracking-widest text-editorial-gold font-bold">
           {getDisplayType(article.type)} / {article.category}
         </div>
         <h1 
-          className="text-2xl font-bold text-editorial-charcoal leading-snug tracking-tight"
+          className="text-2xl sm:text-3xl md:text-5xl font-bold text-editorial-charcoal leading-snug tracking-tight"
           style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
         >
           {article.title}
@@ -207,47 +221,51 @@ export default async function ArticlePage({ params }: PageProps) {
         >
           {article.subtitle}
         </p>
-        <div className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal font-semibold pt-1">
-          By {article.authorName}
+        
+        {/* Mobile metadata (author & reading stats) */}
+        <div className="flex flex-col space-y-0.5 pt-2 border-t border-[#e6e2da]/40">
+          <div className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal font-semibold">
+            By {article.authorName}
+          </div>
+          <div className="text-[10px] font-mono text-editorial-gray uppercase tracking-wider">
+            {article.readingTime || 5} min read &bull; {wordCount.toLocaleString()} words
+          </div>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
           TWO-COLUMN LAYOUT — Left sidebar + Right article body
           ═══════════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col lg:flex-row w-full mt-10 lg:mt-14">
+      <div className="flex flex-col lg:flex-row w-full mt-4 lg:mt-14">
 
         {/* ─── LEFT COLUMN: Metadata Sidebar (~300px wide, generous 80px left margin) ─── */}
-        <aside className="w-full lg:w-[300px] lg:ml-[80px] flex-shrink-0 px-4 sm:px-10 lg:px-0 py-8 lg:py-14 bg-editorial-cream">
-          <div className="lg:sticky lg:top-20 flex flex-col">
+        <aside className="hidden lg:block w-full lg:w-[300px] lg:ml-[80px] flex-shrink-0 lg:px-0 py-14 bg-editorial-cream">
+          <div className="lg:sticky lg:top-20 flex flex-col gap-8">
             
             {/* 1. Author name as a clickable link */}
-            <Link 
-              href="#" 
-              className="text-lg text-editorial-charcoal font-normal hover:underline"
-            >
-              {article.authorName}
-            </Link>
-
-            {/* 2. Short author bio text below the name */}
-            <p className="text-sm text-editorial-gray mt-2 leading-relaxed font-sans font-light">
-              {article.authorBio}
-            </p>
-
-            {/* Empty space */}
-            <div className="h-8 lg:h-12" />
+            <div>
+              <Link 
+                href="#" 
+                className="text-lg text-editorial-charcoal font-normal hover:underline"
+              >
+                {article.authorName}
+              </Link>
+              {/* 2. Short author bio text below the name */}
+              <p className="text-sm text-editorial-gray mt-2 leading-relaxed font-sans font-light">
+                {article.authorBio}
+              </p>
+            </div>
 
             {/* 3. 'Edited by [name]' on one line */}
-            <p className="text-sm text-editorial-gray font-sans font-light">
-              Edited by {(article as any).editedBy || "Srishti"}
-            </p>
-            {/* Word count on next line */}
-            <p className="text-sm text-editorial-gray mt-1 font-sans font-light">
-              {wordCount.toLocaleString()} words
-            </p>
-
-            {/* Empty space */}
-            <div className="h-8 lg:h-12" />
+            <div>
+              <p className="text-sm text-editorial-gray font-sans font-light">
+                Edited by {(article as any).editedBy || "Srishti"}
+              </p>
+              {/* Word count on next line */}
+              <p className="text-sm text-editorial-gray mt-1 font-sans font-light">
+                {wordCount.toLocaleString()} words
+              </p>
+            </div>
 
             {/* 4. Category tags as plain underlined links, each on its own line */}
             <div className="flex flex-col space-y-2.5">
@@ -269,9 +287,6 @@ export default async function ArticlePage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Empty space */}
-            <div className="h-8 lg:h-12" />
-
             {/* 5. A light grey button 'SYNDICATE THIS ARTICLE' in small caps */}
             <button className="bg-neutral-100 hover:bg-neutral-200/80 text-neutral-600 text-[11px] tracking-widest font-mono py-3 px-4 uppercase transition-colors w-full text-center cursor-pointer font-bold">
               SYNDICATE THIS {getDisplayType(article.type, true)}
@@ -285,6 +300,33 @@ export default async function ArticlePage({ params }: PageProps) {
             
             {/* Render content without max-width restriction */}
             {renderContent(article.content)}
+
+            {/* ── Mobile-only: About the Author card ── */}
+            <div className="block lg:hidden mt-10 border-t border-[#e6e2da] pt-6">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-editorial-gold mb-3 font-semibold">About the Author</h3>
+              <p className="text-base font-semibold text-editorial-charcoal">{article.authorName}</p>
+              {article.authorBio && (
+                <p className="text-sm text-editorial-gray mt-1 leading-relaxed font-light">{article.authorBio}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {article.category && (
+                  <Link 
+                    href={`/${article.section}`} 
+                    className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal underline"
+                  >
+                    {article.category}
+                  </Link>
+                )}
+                {article.section && article.section !== article.category && (
+                  <Link 
+                    href={`/${article.section}`} 
+                    className="text-xs font-mono uppercase tracking-wider text-editorial-charcoal underline"
+                  >
+                    {article.section === "national" ? "National" : "International"}
+                  </Link>
+                )}
+              </div>
+            </div>
 
             {/* Save / Share Actions Bar */}
             <ArticleActions articleId={article.id!} articleSlug={article.slug} title={article.title} />

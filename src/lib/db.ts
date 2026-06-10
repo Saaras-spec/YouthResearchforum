@@ -30,6 +30,8 @@ export interface Article {
   section: "national" | "international";
   category: string;
   coverImage: string;
+  coverImageCredit?: string;
+  photoCredit?: string;
   createdAt: any;
   readingTime: number; // in minutes
   featured: boolean;
