@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Checks if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function: Checks if the user is an admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Helper function: Checks if the user's email is verified
+    function isEmailVerified() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.emailVerified == true;
+    }
+
+    // --- USERS COLLECTION ---
+    match /users/{userId} {
+      // Users can only read their own profile (admins can read all)
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      
+      // Creating a user document (signup)
+      // Must be authenticated, document ID must match auth UID, and role must be 'reader' and emailVerified false
+      allow create: if isAuthenticated() && request.auth.uid == userId 
+                    && request.resource.data.role == 'reader'
+                    && request.resource.data.emailVerified == false;
+      
+      // Updating a user document
+      // Admins can update anything.
+      // Regular users can only update their own profile, and cannot touch 'role' or 'emailVerified'
+      allow update: if isAdmin() || (
+        isAuthenticated() && request.auth.uid == userId 
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'emailVerified'])
+      );
+      
+      // Deletion is restricted to admins
+      allow delete: if isAdmin();
+    }
+
+    // --- ARTICLES COLLECTION ---
+    match /articles/{articleId} {
+      // Anyone can read articles
+      allow read: if true;
+      
+      // Only admins can write (create, update, delete) articles
+      allow write: if isAdmin();
+    }
+
+    // --- COMMENTS COLLECTION ---
+    match /comments/{commentId} {
+      // Anyone can read comments
+      allow read: if true;
+      
+      // Authenticated users with verified emails can create comments
+      // Must match their own userId
+      allow create: if isEmailVerified() 
+                    && request.resource.data.userId == request.auth.uid;
+      
+      // Only admins can update or delete comments (moderation)
+      allow update, delete: if isAdmin();
+    }
+
+    // --- BOOKMARKS COLLECTION ---
+    match /bookmarks/{bookmarkId} {
+      // A user can only read, create, and delete their own bookmarks
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // --- NEWSLETTER SUBSCRIBERS COLLECTION ---
+    match /newsletterSubscribers/{email} {
+      // Anyone can subscribe (create/update their subscription)
+      allow create, update: if true;
+      
+      // Only admins can read, list or delete subscribers
+      allow read, delete: if isAdmin();
+    }
+
+    // --- EMAIL VERIFICATIONS COLLECTION ---
+    // (Used by API routes via the Firebase Admin SDK)
+    match /emailVerifications/{tokenId} {
+      // Secure: Block all client-side access.
+      // Admin SDK on the server completely bypasses these rules.
+      allow read, write: if false;
+    }
+  }
+}
