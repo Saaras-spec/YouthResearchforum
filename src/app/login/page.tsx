@@ -55,45 +55,55 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       let userExists = false;
+      let checkSucceeded = false;
 
-      // 1. Try checking using fetchSignInMethodsForEmail
+      // 1. Try checking using fetchSignInMethodsForEmail (client-side)
       try {
         const methods = await fetchSignInMethodsForEmail(auth, cleanedEmail);
         if (methods && methods.length > 0) {
           userExists = true;
         }
+        checkSucceeded = true;
       } catch (authErr) {
         console.warn("Firebase Auth signInMethods check skipped/failed:", authErr);
       }
 
       // 2. Double check via secure API (handles Firestore read rules on production)
-      if (!userExists) {
-        const response = await fetch("/api/check-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: cleanedEmail }),
-        });
+      if (!userExists && !checkSucceeded) {
+        try {
+          const response = await fetch("/api/check-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: cleanedEmail }),
+          });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            userExists = data.exists;
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+              userExists = data.exists;
+              checkSucceeded = true;
+            }
           }
-        } else {
-          throw new Error("API verification failed");
+        } catch (apiErr) {
+          console.warn("API check-email failed:", apiErr);
         }
       }
 
       if (userExists) {
         setStep("login");
-      } else {
+      } else if (checkSucceeded) {
+        // Check succeeded and user doesn't exist — go to signup
         setStep("signup");
+      } else {
+        // Both checks failed — default to login, user can switch to signup if needed
+        setStep("login");
       }
     } catch (err: any) {
       console.error("Email verification error:", err);
-      setError("Could not verify email. Please try again.");
+      // Even on unexpected error, go to login instead of blocking the user
+      setStep("login");
     } finally {
       setIsSubmitting(false);
     }
