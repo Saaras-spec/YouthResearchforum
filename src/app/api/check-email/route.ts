@@ -3,70 +3,75 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
-
-    console.log("=== check-email API called ===");
-    console.log("FIREBASE_API_KEY exists:", !!process.env.FIREBASE_API_KEY);
-    console.log("NEXT_PUBLIC_FIREBASE_API_KEY exists:", !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
-
     if (!email) {
-      return NextResponse.json(
-        { success: false, error: "Email field is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "Email required" }, { status: 400 });
     }
 
     const cleanedEmail = email.trim().toLowerCase();
-    const apiKey = process.env.FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "";
-
-    if (!apiKey) {
-      console.error("check-email: Firebase API key is not configured.");
-      return NextResponse.json(
-        { success: false, error: "Server configuration error." },
-        { status: 500 }
-      );
+    
+    // Get OAuth token from service account
+    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    if (!serviceAccountKey) {
+      return NextResponse.json({ success: false, error: "Server config error" }, { status: 500 });
     }
 
-    // Use Firebase Auth REST API (createAuthUri) to check if email exists
-    // fetchSignInMethodsForEmail was deprecated and removed by Google
-    const encodedKey = encodeURIComponent(apiKey);
-    const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=${encodedKey}`,
+    const serviceAccount = JSON.parse(serviceAccountKey);
+
+    // Use jose to sign — install jose: npm install jose
+    const { SignJWT, importPKCS8 } = await import("jose");
+    const privateKey = await importPKCS8(serviceAccount.private_key, "RS256");
+    const jwt = await new SignJWT({ 
+      iss: serviceAccount.client_email,
+      scope: "https://www.googleapis.com/auth/datastore",
+      aud: "https://oauth2.googleapis.com/token",
+    })
+      .setProtectedHeader({ alg: "RS256" })
+      .setIssuedAt()
+      .setExpirationTime("1h")
+      .sign(privateKey);
+
+    // Exchange JWT for access token
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+    });
+    
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+
+    // Query Firestore with authenticated token
+    const projectId = serviceAccount.project_id;
+    const queryRes = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
-          identifier: cleanedEmail,
-          continueUri: "https://youth-researchforum.vercel.app",
+          structuredQuery: {
+            from: [{ collectionId: "users" }],
+            where: {
+              fieldFilter: {
+                field: { fieldPath: "email" },
+                op: "EQUAL",
+                value: { stringValue: cleanedEmail },
+              },
+            },
+            limit: 1,
+          },
         }),
       }
     );
 
-    if (!res.ok) {
-      const errBody = await res.text();
-      console.error("Firebase Auth API error:", res.status, errBody);
-      return NextResponse.json(
-        { success: false, error: "Failed to check email." },
-        { status: 500 }
-      );
-    }
+    const results = await queryRes.json();
+    const exists = Array.isArray(results) && results.some(r => r.document);
 
-    const data = await res.json();
-    console.log("Firebase Auth API response:", JSON.stringify(data));
-
-    // createAuthUri returns registered: true if email exists
-    // If registered field is missing/undefined, treat as not registered
-    const exists = data.registered === true;
-    console.log("User exists:", exists, "| registered field:", data.registered);
-
-    return NextResponse.json({
-      success: true,
-      exists,
-    });
+    return NextResponse.json({ success: true, exists });
   } catch (error: any) {
-    console.error("API error in check-email:", error);
-    return NextResponse.json(
-      { success: false, error: error.message || "Failed to check if email exists." },
-      { status: 500 }
-    );
+    console.error("check-email error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
