@@ -26,15 +26,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use Firebase Auth REST API to check if email exists
-    // This bypasses Firestore rules entirely
+    // Use Firebase Auth REST API (createAuthUri) to check if email exists
+    // fetchSignInMethodsForEmail was deprecated and removed by Google
     const encodedKey = encodeURIComponent(apiKey);
     const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:fetchSignInMethodsForEmail?key=${encodedKey}`,
+      `https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=${encodedKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanedEmail }),
+        body: JSON.stringify({
+          identifier: cleanedEmail,
+          continueUri: "http://localhost",
+        }),
       }
     );
 
@@ -50,8 +53,8 @@ export async function POST(request: NextRequest) {
     const data = await res.json();
     console.log("Firebase Auth API response:", JSON.stringify(data));
 
-    // If signInMethods array has entries, the user exists
-    const exists = Array.isArray(data.signInMethods) && data.signInMethods.length > 0;
+    // createAuthUri returns { registered: true } if the email exists
+    const exists = data.registered === true;
 
     return NextResponse.json({
       success: true,
