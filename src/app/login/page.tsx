@@ -66,13 +66,23 @@ export default function LoginPage() {
         console.warn("Firebase Auth signInMethods check skipped/failed:", authErr);
       }
 
-      // 2. Double check Firestore users collection
+      // 2. Double check via secure API (handles Firestore read rules on production)
       if (!userExists) {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", cleanedEmail.toLowerCase()), limit(1));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          userExists = true;
+        const response = await fetch("/api/check-user-exists", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: cleanedEmail }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            userExists = data.exists;
+          }
+        } else {
+          throw new Error("API verification failed");
         }
       }
 
@@ -88,6 +98,7 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+
 
   // Step 2a: Log In
   const handleLoginSubmit = async (e: React.FormEvent) => {
