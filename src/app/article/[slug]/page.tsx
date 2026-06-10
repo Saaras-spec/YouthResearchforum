@@ -303,10 +303,7 @@ export default async function ArticlePage({ params }: PageProps) {
               )}
             </div>
 
-            {/* 5. A light grey button 'SYNDICATE THIS ARTICLE' in small caps */}
-            <button className="bg-neutral-100 hover:bg-neutral-200/80 text-neutral-600 text-[11px] tracking-widest font-mono py-3 px-4 uppercase transition-colors w-full text-center cursor-pointer font-bold">
-              SYNDICATE THIS {getDisplayType(article.type, true)}
-            </button>
+
           </div>
         </aside>
 
