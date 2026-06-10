@@ -9,7 +9,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, collection, query, where, getDocs, limit, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
@@ -54,55 +53,22 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      let userExists = false;
-      let checkSucceeded = false;
+      const response = await fetch("/api/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanedEmail }),
+      });
 
-      // 1. Try checking using fetchSignInMethodsForEmail (client-side)
-      try {
-        const methods = await fetchSignInMethodsForEmail(auth, cleanedEmail);
-        if (methods && methods.length > 0) {
-          userExists = true;
-        }
-        checkSucceeded = true;
-      } catch (authErr) {
-        console.warn("Firebase Auth signInMethods check skipped/failed:", authErr);
-      }
+      const data = await response.json();
 
-      // 2. Double check via secure API (handles Firestore read rules on production)
-      if (!userExists && !checkSucceeded) {
-        try {
-          const response = await fetch("/api/check-email", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email: cleanedEmail }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success) {
-              userExists = data.exists;
-              checkSucceeded = true;
-            }
-          }
-        } catch (apiErr) {
-          console.warn("API check-email failed:", apiErr);
-        }
-      }
-
-      if (userExists) {
+      if (data.success && data.exists) {
         setStep("login");
-      } else if (checkSucceeded) {
-        // Check succeeded and user doesn't exist — go to signup
-        setStep("signup");
       } else {
-        // Both checks failed — default to login, user can switch to signup if needed
-        setStep("login");
+        setStep("signup");
       }
     } catch (err: any) {
-      console.error("Email verification error:", err);
-      // Even on unexpected error, go to login instead of blocking the user
+      console.error("Email check error:", err);
+      // On failure, default to login so the user isn't blocked
       setStep("login");
     } finally {
       setIsSubmitting(false);
