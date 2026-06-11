@@ -72,23 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           emailVerified: data.emailVerified === true,
         });
       } else {
-        // If user document does not exist, create it with default "reader" role and unverified
+        // If user document does not exist, just set default local state (don't write to DB!)
         const displayName = currentUser.displayName || "Reader";
         const parts = displayName.trim().split(/\s+/);
         const firstName = parts[0] || "Reader";
         const lastName = parts.slice(1).join(" ") || "";
 
-        await setDoc(docRef, {
-          uid: currentUser.uid,
-          firstName,
-          lastName,
-          name: displayName, // keep legacy field for backward compat
-          email: currentUser.email || "",
-          role: "reader",
-          photoURL: currentUser.photoURL || "",
-          createdAt: serverTimestamp(),
-          emailVerified: true,
-        });
         setRole("reader");
         setEmailVerified(true);
         setUserData({
@@ -107,8 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshRole = async () => {
-    if (user) {
-      await fetchUserRole(user);
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      await fetchUserRole(currentUser);
     }
   };
 
