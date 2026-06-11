@@ -86,6 +86,28 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const authUser = userCredential.user;
 
+      // Auto-recreate Firestore profile document if missing
+      const userDocRef = doc(db, "users", authUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (!userDocSnap.exists()) {
+        const displayName = authUser.displayName || "Reader";
+        const parts = displayName.trim().split(/\s+/);
+        const firstName = parts[0] || "Reader";
+        const lastName = parts.slice(1).join(" ") || "";
+        
+        await setDoc(userDocRef, {
+          uid: authUser.uid,
+          firstName,
+          lastName,
+          name: displayName,
+          email: email.trim().toLowerCase(),
+          role: "reader",
+          photoURL: authUser.photoURL || "",
+          createdAt: serverTimestamp(),
+          emailVerified: true,
+        });
+      }
+
       await refreshRole();
     } catch (err: any) {
       console.error("Login error:", err);

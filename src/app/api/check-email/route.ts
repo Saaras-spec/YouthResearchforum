@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const privateKey = await importPKCS8(serviceAccount.private_key, "RS256");
     const jwt = await new SignJWT({ 
       iss: serviceAccount.client_email,
-      scope: "https://www.googleapis.com/auth/datastore",
+      scope: "https://www.googleapis.com/auth/cloud-platform",
       aud: "https://oauth2.googleapis.com/token",
     })
       .setProtectedHeader({ alg: "RS256" })
@@ -39,35 +39,69 @@ export async function POST(request: NextRequest) {
     
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
-
-    // Query Firestore with authenticated token
     const projectId = serviceAccount.project_id;
-    const queryRes = await fetch(
-      `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          structuredQuery: {
-            from: [{ collectionId: "users" }],
-            where: {
-              fieldFilter: {
-                field: { fieldPath: "email" },
-                op: "EQUAL",
-                value: { stringValue: cleanedEmail },
-              },
-            },
-            limit: 1,
-          },
-        }),
-      }
-    );
 
-    const results = await queryRes.json();
-    const exists = Array.isArray(results) && results.some(r => r.document);
+    // 1. Check Firebase Auth (Identity Toolkit API)
+    let authExists = false;
+    try {
+      const authLookupRes = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:lookup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            email: [cleanedEmail],
+          }),
+        }
+      );
+      
+      if (authLookupRes.ok) {
+        const authData = await authLookupRes.json();
+        authExists = Array.isArray(authData.users) && authData.users.length > 0;
+      } else {
+        console.warn("Identity Toolkit lookup failed:", await authLookupRes.text());
+      }
+    } catch (authErr) {
+      console.error("Auth check error:", authErr);
+    }
+
+    // 2. Check Firestore
+    let firestoreExists = false;
+    try {
+      const queryRes = await fetch(
+        `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            structuredQuery: {
+              from: [{ collectionId: "users" }],
+              where: {
+                fieldFilter: {
+                  field: { fieldPath: "email" },
+                  op: "EQUAL",
+                  value: { stringValue: cleanedEmail },
+                },
+              },
+              limit: 1,
+            },
+          }),
+        }
+      );
+
+      const results = await queryRes.json();
+      firestoreExists = Array.isArray(results) && results.some(r => r.document);
+    } catch (fsErr) {
+      console.error("Firestore check error:", fsErr);
+    }
+
+    const exists = authExists || firestoreExists;
 
     return NextResponse.json({ success: true, exists });
   } catch (error: any) {
