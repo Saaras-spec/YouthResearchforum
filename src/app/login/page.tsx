@@ -169,7 +169,8 @@ export default function LoginPage() {
 
       // 3. Write user document to Firestore with role 'reader' and emailVerified: true
       console.log("[Signup] Attempting to write Firestore profile document to users/" + firebaseUser.uid);
-      await setDoc(doc(db, "users", firebaseUser.uid), {
+      const userDocRef = doc(db, "users", firebaseUser.uid);
+      await setDoc(userDocRef, {
         uid: firebaseUser.uid,
         firstName: trimmedFirst,
         lastName: trimmedLast,
@@ -182,6 +183,15 @@ export default function LoginPage() {
       });
       console.log("[Signup] Firestore profile document written successfully.");
 
+      // 3b. Verify the document exists immediately
+      console.log("[Signup] Verifying Firestore document via immediate getDoc for UID:", firebaseUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        console.log("[Signup] Verification Succeeded! Document exists. Data:", userDocSnap.data());
+      } else {
+        console.error("[Signup] Verification Failed! Document does NOT exist in Firestore right after setDoc.");
+      }
+
       // 4. Refresh user role and redirect to home
       console.log("[Signup] Refreshing user role in AuthContext...");
       await refreshRole();
@@ -189,12 +199,14 @@ export default function LoginPage() {
       router.push("/");
     } catch (err: any) {
       console.error("[Signup] Signup failed:", err);
+      // Construct a very detailed error message so the user can see exact codes (e.g. permission-denied)
+      const detailedError = `Error Code: ${err.code || 'N/A'} | Message: ${err.message || err.toString()}`;
       if (err.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please log in with your password.");
         setPassword("");
         setStep("login");
       } else {
-        setError(err.message || "Failed to create account.");
+        setError(`Failed to create account. Detail: ${detailedError}`);
       }
     } finally {
       setIsSubmitting(false);
