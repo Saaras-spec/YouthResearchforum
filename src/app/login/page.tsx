@@ -173,7 +173,11 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error("Signup error:", err);
       if (err.code === "auth/email-already-in-use") {
-        setError("This email address is already registered.");
+        // Email already exists in Firebase Auth (e.g. from a previous incomplete signup).
+        // Redirect to login step so they can sign in with their password.
+        setError("This email is already registered. Please log in with your password.");
+        setPassword("");
+        setStep("login");
       } else {
         setError(err.message || "Failed to create account.");
       }
