@@ -83,13 +83,17 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
+      console.log("[Login] Attempting sign-in for email:", email.trim());
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const authUser = userCredential.user;
+      console.log("[Login] Firebase Auth sign-in successful. UID:", authUser.uid);
 
       // Auto-recreate Firestore profile document if missing
+      console.log("[Login] Checking Firestore profile document for UID:", authUser.uid);
       const userDocRef = doc(db, "users", authUser.uid);
       const userDocSnap = await getDoc(userDocRef);
       if (!userDocSnap.exists()) {
+        console.warn("[Login] Firestore profile document missing for UID:", authUser.uid, "- Attempting auto-recreation...");
         const displayName = authUser.displayName || "Reader";
         const parts = displayName.trim().split(/\s+/);
         const firstName = parts[0] || "Reader";
@@ -106,11 +110,16 @@ export default function LoginPage() {
           createdAt: serverTimestamp(),
           emailVerified: true,
         });
+        console.log("[Login] Firestore profile document auto-recreated successfully.");
+      } else {
+        console.log("[Login] Firestore profile document exists for UID:", authUser.uid);
       }
 
+      console.log("[Login] Refreshing user role in AuthContext...");
       await refreshRole();
+      console.log("[Login] User role refreshed successfully.");
     } catch (err: any) {
-      console.error("Login error:", err);
+      console.error("[Login] Login failed:", err);
       if (
         err.code === "auth/user-not-found" ||
         err.code === "auth/wrong-password" ||
@@ -142,19 +151,24 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       // 1. Create Firebase Auth user
+      console.log("[Signup] Attempting to create Firebase Auth user for email:", email.trim());
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
       const firebaseUser = userCredential.user;
+      console.log("[Signup] Firebase Auth user created successfully. UID:", firebaseUser.uid);
 
       const trimmedFirst = firstName.trim();
       const trimmedLast = lastName.trim();
       const displayName = `${trimmedFirst} ${trimmedLast}`.trim();
 
       // 2. Set display name
+      console.log("[Signup] Updating Firebase Auth profile display name to:", displayName);
       await updateProfile(firebaseUser, {
         displayName,
       });
+      console.log("[Signup] Firebase Auth profile display name updated successfully.");
 
       // 3. Write user document to Firestore with role 'reader' and emailVerified: true
+      console.log("[Signup] Attempting to write Firestore profile document to users/" + firebaseUser.uid);
       await setDoc(doc(db, "users", firebaseUser.uid), {
         uid: firebaseUser.uid,
         firstName: trimmedFirst,
@@ -166,15 +180,16 @@ export default function LoginPage() {
         createdAt: serverTimestamp(),
         emailVerified: true,
       });
+      console.log("[Signup] Firestore profile document written successfully.");
 
       // 4. Refresh user role and redirect to home
+      console.log("[Signup] Refreshing user role in AuthContext...");
       await refreshRole();
+      console.log("[Signup] User role refreshed successfully. Redirecting to home...");
       router.push("/");
     } catch (err: any) {
-      console.error("Signup error:", err);
+      console.error("[Signup] Signup failed:", err);
       if (err.code === "auth/email-already-in-use") {
-        // Email already exists in Firebase Auth (e.g. from a previous incomplete signup).
-        // Redirect to login step so they can sign in with their password.
         setError("This email is already registered. Please log in with your password.");
         setPassword("");
         setStep("login");
