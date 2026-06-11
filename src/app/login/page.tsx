@@ -14,7 +14,7 @@ import { doc, setDoc, getDoc, collection, query, where, getDocs, limit, serverTi
 import { auth, db } from "@/lib/firebase";
 import { Lock, Mail, User, AlertCircle, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 
-type AuthStep = "email" | "login" | "signup" | "verification-sent";
+type AuthStep = "email" | "login" | "signup";
 
 export default function LoginPage() {
   const { user, role, loading, refreshRole, logout } = useAuth();
@@ -86,38 +86,6 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const authUser = userCredential.user;
 
-      // Check verification status in Firestore
-      const userDocRef = doc(db, "users", authUser.uid);
-      const userDocSnap = await getDoc(userDocRef);
-
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        if (userData.role !== "admin" && userData.emailVerified === false) {
-          // Trigger automatic resend of verification email
-          try {
-            await fetch("/api/send-verification", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                email: email.trim().toLowerCase(),
-                userId: authUser.uid,
-                name: userData.name || `${userData.firstName} ${userData.lastName}` || "Reader",
-              }),
-            });
-          } catch (sendErr) {
-            console.error("Resend verification error:", sendErr);
-          }
-
-          // Log out and show verification page
-          await logout();
-          setStep("verification-sent");
-          setIsSubmitting(false);
-          return;
-        }
-      }
-
       await refreshRole();
     } catch (err: any) {
       console.error("Login error:", err);
@@ -164,7 +132,7 @@ export default function LoginPage() {
         displayName,
       });
 
-      // 3. Write user document to Firestore with role 'reader' and emailVerified: false
+      // 3. Write user document to Firestore with role 'reader' and emailVerified: true
       await setDoc(doc(db, "users", firebaseUser.uid), {
         uid: firebaseUser.uid,
         firstName: trimmedFirst,
@@ -174,29 +142,12 @@ export default function LoginPage() {
         role: "reader",
         photoURL: "",
         createdAt: serverTimestamp(),
-        emailVerified: false,
+        emailVerified: true,
       });
 
-      // 4. Trigger sending the verification email via API
-      try {
-        await fetch("/api/send-verification", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.trim().toLowerCase(),
-            userId: firebaseUser.uid,
-            name: displayName,
-          }),
-        });
-      } catch (sendErr) {
-        console.error("Failed to trigger verification email sending:", sendErr);
-      }
-
-      // 5. Sign out the user and transition to 'verification-sent' screen
-      await logout();
-      setStep("verification-sent");
+      // 4. Refresh user role and redirect to home
+      await refreshRole();
+      router.push("/");
     } catch (err: any) {
       console.error("Signup error:", err);
       if (err.code === "auth/email-already-in-use") {
@@ -470,33 +421,7 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* STEP 2c: Verification Sent Screen */}
-        {step === "verification-sent" && (
-          <div className="mt-6 text-center space-y-6">
-            <div className="flex justify-center">
-              <CheckCircle className="h-16 w-16 text-emerald-600 stroke-[1.5] animate-pulse" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-serif text-xl font-bold text-editorial-charcoal">Check your inbox</h3>
-              <p className="text-sm text-editorial-gray font-light leading-relaxed">
-                A verification link has been sent to <strong className="text-editorial-charcoal">{email}</strong>.
-              </p>
-              <p className="text-xs text-editorial-gray/80 font-light leading-relaxed pt-2">
-                Please click the link inside the email to activate your account. The link expires in 15 minutes. Once verified, you can sign in.
-              </p>
-            </div>
-            <div className="pt-4">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="group relative w-full flex justify-center py-3 px-4 border border-[#e6e2da] text-xs uppercase tracking-widest font-bold text-editorial-gray hover:text-editorial-charcoal hover:bg-editorial-cream-dark/30 transition-all rounded-sm cursor-pointer"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-0.5 transition-transform" />
-                Back to Sign In
-              </button>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );

@@ -51,16 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (docSnap.exists()) {
         const data = docSnap.data();
 
-        // Enforce verification check: Force log out if they are a reader and unverified
-        if (data.role !== "admin" && data.emailVerified === false) {
-          console.warn("Unverified reader account detected. Forcing logout.");
-          await signOut(auth);
-          setUser(null);
-          setRole(null);
-          setUserData(null);
-          setEmailVerified(false);
-          return;
-        }
 
         setRole(data.role || "reader");
         setEmailVerified(data.emailVerified === true);
@@ -97,25 +87,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: "reader",
           photoURL: currentUser.photoURL || "",
           createdAt: serverTimestamp(),
-          emailVerified: false,
+          emailVerified: true,
         });
         setRole("reader");
-        setEmailVerified(false);
+        setEmailVerified(true);
         setUserData({
           firstName,
           lastName,
           photoURL: currentUser.photoURL || "",
           email: currentUser.email || "",
-          emailVerified: false,
+          emailVerified: true,
         });
-
-        // Immediately logout since it is a new unverified reader account
-        console.warn("New unverified reader registered. Forcing logout.");
-        await signOut(auth);
-        setUser(null);
-        setRole(null);
-        setUserData(null);
-        setEmailVerified(false);
       }
     } catch (error) {
       console.error("Error fetching user role:", error);
