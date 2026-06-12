@@ -283,7 +283,6 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                  placeholder="name@university.edu"
                   disabled={isSubmitting}
                 />
                 <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />
@@ -339,7 +338,6 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                    placeholder="••••••••"
                     disabled={isSubmitting}
                   />
                   <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />
@@ -395,7 +393,6 @@ export default function LoginPage() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                    placeholder="Jane"
                     disabled={isSubmitting}
                   />
                   <User className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />
@@ -413,7 +410,6 @@ export default function LoginPage() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                    placeholder="Doe"
                     disabled={isSubmitting}
                   />
                   <User className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />
@@ -434,7 +430,6 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                  placeholder="••••••••"
                   disabled={isSubmitting}
                 />
                 <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />
@@ -454,7 +449,6 @@ export default function LoginPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full bg-editorial-cream-dark/20 border border-[#e6e2da] px-3.5 py-2.5 text-sm outline-none text-editorial-charcoal placeholder-editorial-gray/40 focus:border-editorial-accent transition-colors rounded-sm pl-10"
-                  placeholder="••••••••"
                   disabled={isSubmitting}
                 />
                 <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-editorial-gray/60 stroke-[1.5]" />

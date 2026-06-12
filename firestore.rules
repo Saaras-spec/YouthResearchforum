@@ -22,10 +22,8 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
       
       // Creating a user document (signup)
-      // Must be authenticated, document ID must match auth UID, and role must be 'reader' and emailVerified true
-      allow create: if isAuthenticated() && request.auth.uid == userId 
-                    && request.resource.data.role == 'reader'
-                    && request.resource.data.emailVerified == true;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId;
       
       // Updating a user document
       // Admins can update anything.
